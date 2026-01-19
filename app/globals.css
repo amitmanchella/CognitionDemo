@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #ffffff;
-  color: #1a1a1a;
+  @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100;
 }
 
 .prose {
@@ -40,15 +39,14 @@ body {
 }
 
 .prose code {
-  background-color: #f3f4f6;
+  @apply bg-gray-100 dark:bg-gray-800;
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-size: 0.875rem;
 }
 
 .prose pre {
-  background-color: #1a1a1a;
-  color: #e5e7eb;
+  @apply bg-gray-900 dark:bg-gray-800 text-gray-100;
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;

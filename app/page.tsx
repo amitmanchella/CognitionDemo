@@ -8,7 +8,7 @@ export default function Home() {
     <div>
       <section className="mb-12">
         <h1 className="text-4xl font-bold mb-4">Welcome to My Blog</h1>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 dark:text-gray-300 text-lg">
           I write about web development, TypeScript, and building side projects.
         </p>
       </section>
