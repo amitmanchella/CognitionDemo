@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #ffffff;
-  color: #1a1a1a;
-}
-
 .prose {
   max-width: 65ch;
 }
@@ -46,6 +41,11 @@ body {
   font-size: 0.875rem;
 }
 
+:is(.dark .prose code) {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
 .prose pre {
   background-color: #1a1a1a;
   color: #e5e7eb;
@@ -53,4 +53,9 @@ body {
   border-radius: 0.5rem;
   overflow-x: auto;
   margin-bottom: 1.25rem;
+}
+
+:is(.dark .prose pre) {
+  background-color: #111827;
+  border: 1px solid #374151;
 }
