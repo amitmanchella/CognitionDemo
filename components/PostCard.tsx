@@ -6,6 +6,8 @@ interface PostCardProps {
     title: string
     date: string
     excerpt: string
+    readingTime: number
+    wordCount: number
   }
 }
 
@@ -17,12 +19,15 @@ export default function PostCard({ post }: PostCardProps) {
           {post.title}
         </h3>
       </Link>
-      <p className="text-gray-500 text-sm mb-2">
+      <p className="text-gray-500 text-sm mb-1">
         {new Date(post.date).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         })}
+      </p>
+      <p className="text-gray-400 text-xs mb-2">
+        {post.readingTime} min read · {post.wordCount} words
       </p>
       <p className="text-gray-600">{post.excerpt}</p>
     </article>
