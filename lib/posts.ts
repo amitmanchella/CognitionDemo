@@ -10,6 +10,14 @@ export interface Post {
   date: string
   excerpt: string
   content: string
+  readingTime: number
+}
+
+export function calculateReadingTime(content: string): number {
+  const wordsPerMinute = 200
+  const words = content.split(/\s+/).filter((word) => word.length > 0)
+  const minutes = Math.ceil(words.length / wordsPerMinute)
+  return Math.max(1, minutes)
 }
 
 export function getAllPosts(): Post[] {
@@ -28,6 +36,7 @@ export function getAllPosts(): Post[] {
         date: data.date,
         excerpt: data.excerpt,
         content,
+        readingTime: calculateReadingTime(content),
       }
     })
 
@@ -46,6 +55,7 @@ export function getPostBySlug(slug: string): Post | undefined {
       date: data.date,
       excerpt: data.excerpt,
       content,
+      readingTime: calculateReadingTime(content),
     }
   } catch {
     return undefined
