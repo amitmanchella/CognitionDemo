@@ -24,14 +24,14 @@ export default async function PostPage({ params }: PostPageProps) {
     <article>
       <Link 
         href="/" 
-        className="text-blue-600 hover:underline mb-6 inline-block"
+        className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-block"
       >
         ← Back to all posts
       </Link>
 
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           {new Date(post.date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
