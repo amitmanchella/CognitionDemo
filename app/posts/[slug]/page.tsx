@@ -37,6 +37,8 @@ export default async function PostPage({ params }: PostPageProps) {
             month: 'long',
             day: 'numeric',
           })}
+          {' · '}
+          {post.wordCount} words · {post.readingTime} min read
         </p>
       </header>
 

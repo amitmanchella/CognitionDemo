@@ -10,6 +10,20 @@ export interface Post {
   date: string
   excerpt: string
   content: string
+  wordCount: number
+  readingTime: number
+}
+
+export function getWordCount(content: string): number {
+  const text = content.trim()
+  if (!text) return 0
+  return text.split(/\s+/).length
+}
+
+export function calculateReadingTime(wordCount: number): number {
+  const wordsPerMinute = 200
+  const minutes = Math.ceil(wordCount / wordsPerMinute)
+  return Math.max(1, minutes)
 }
 
 export function getAllPosts(): Post[] {
@@ -22,12 +36,17 @@ export function getAllPosts(): Post[] {
       const fileContents = fs.readFileSync(fullPath, 'utf8')
       const { data, content } = matter(fileContents)
 
+      const wordCount = getWordCount(content)
+      const readingTime = calculateReadingTime(wordCount)
+
       return {
         slug,
         title: data.title,
         date: data.date,
         excerpt: data.excerpt,
         content,
+        wordCount,
+        readingTime,
       }
     })
 
@@ -40,12 +59,17 @@ export function getPostBySlug(slug: string): Post | undefined {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     const { data, content } = matter(fileContents)
 
+    const wordCount = getWordCount(content)
+    const readingTime = calculateReadingTime(wordCount)
+
     return {
       slug,
       title: data.title,
       date: data.date,
       excerpt: data.excerpt,
       content,
+      wordCount,
+      readingTime,
     }
   } catch {
     return undefined
