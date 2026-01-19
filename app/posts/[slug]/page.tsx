@@ -31,13 +31,14 @@ export default async function PostPage({ params }: PostPageProps) {
 
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
-        <p className="text-gray-500">
+        <p className="text-gray-500 mb-1">
           {new Date(post.date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           })}
         </p>
+        <p className="text-gray-400 text-sm">{post.readingTime} min read</p>
       </header>
 
       <div className="prose">

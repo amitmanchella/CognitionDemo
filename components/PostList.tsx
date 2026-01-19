@@ -5,6 +5,7 @@ interface Post {
   title: string
   date: string
   excerpt: string
+  readingTime: number
 }
 
 interface PostListProps {

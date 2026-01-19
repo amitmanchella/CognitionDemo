@@ -4,12 +4,20 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'content/posts')
 
+export function calculateReadingTime(content: string): number {
+  const wordsPerMinute = 200
+  const words = content.split(/\s+/).filter((word) => word.length > 0).length
+  const readingTime = Math.ceil(words / wordsPerMinute)
+  return Math.max(1, readingTime)
+}
+
 export interface Post {
   slug: string
   title: string
   date: string
   excerpt: string
   content: string
+  readingTime: number
 }
 
 export function getAllPosts(): Post[] {
@@ -28,6 +36,7 @@ export function getAllPosts(): Post[] {
         date: data.date,
         excerpt: data.excerpt,
         content,
+        readingTime: calculateReadingTime(content),
       }
     })
 
@@ -46,6 +55,7 @@ export function getPostBySlug(slug: string): Post | undefined {
       date: data.date,
       excerpt: data.excerpt,
       content,
+      readingTime: calculateReadingTime(content),
     }
   } catch {
     return undefined
