@@ -4,12 +4,33 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'content/posts')
 
+export function calculateReadingStats(content: string): { wordCount: number; readingTime: number } {
+  const strippedContent = content
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]*`/g, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
+    .replace(/#{1,6}\s*/g, '')
+    .replace(/[*_~`]/g, '')
+    .replace(/\n/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const words = strippedContent.split(/\s+/).filter((word) => word.length > 0)
+  const wordCount = words.length
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+
+  return { wordCount, readingTime }
+}
+
 export interface Post {
   slug: string
   title: string
   date: string
   excerpt: string
   content: string
+  wordCount: number
+  readingTime: number
 }
 
 export function getAllPosts(): Post[] {
@@ -22,12 +43,16 @@ export function getAllPosts(): Post[] {
       const fileContents = fs.readFileSync(fullPath, 'utf8')
       const { data, content } = matter(fileContents)
 
+      const { wordCount, readingTime } = calculateReadingStats(content)
+
       return {
         slug,
         title: data.title,
         date: data.date,
         excerpt: data.excerpt,
         content,
+        wordCount,
+        readingTime,
       }
     })
 
@@ -40,12 +65,16 @@ export function getPostBySlug(slug: string): Post | undefined {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     const { data, content } = matter(fileContents)
 
+    const { wordCount, readingTime } = calculateReadingStats(content)
+
     return {
       slug,
       title: data.title,
       date: data.date,
       excerpt: data.excerpt,
       content,
+      wordCount,
+      readingTime,
     }
   } catch {
     return undefined
