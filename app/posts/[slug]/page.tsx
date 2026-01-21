@@ -38,6 +38,9 @@ export default async function PostPage({ params }: PostPageProps) {
             day: 'numeric',
           })}
         </p>
+        <p className="text-gray-500 text-sm">
+          {post.wordCount} words · {post.readingTime} min read
+        </p>
       </header>
 
       <div className="prose">
