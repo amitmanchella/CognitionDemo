@@ -7,10 +7,11 @@ export function validateEmail(email: string): boolean {
   return emailRegex.test(email)
 }
 
-// VULNERABILITY 28: Another ReDoS pattern
+// FIXED: ReDoS vulnerability - removed nested quantifier that caused exponential backtracking
 export function validateUrl(url: string): boolean {
-  // Vulnerable: Evil regex
-  const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  // Fixed: Removed nested quantifier ([\/\w \.-]*)* which caused exponential backtracking on spaces
+  // Changed to non-nested pattern [\/\w.-]* (also removed space from path to prevent backtracking)
+  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w.-]*)\/?$/
   return urlRegex.test(url)
 }
 
