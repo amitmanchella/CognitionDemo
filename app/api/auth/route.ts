@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { exec } from 'child_process'
 
+function sanitizeForLog(input: string): string {
+  return input.replace(/[\r\n\t\x00-\x1F\x7F]/g, '')
+}
+
 // VULNERABILITY 1: Hardcoded credentials (Type A)
 const API_SECRET = 'sk_live_abcdef123456789'
 
@@ -31,11 +35,11 @@ export async function GET(request: NextRequest) {
 
   // VULNERABILITY 5: SQL injection (Type C)
   const query1 = `SELECT * FROM users WHERE email = '${email}'`
-  console.log('Executing:', query1)
+  console.log('Executing:', sanitizeForLog(query1))
 
   // VULNERABILITY 6: SQL injection (Type C)
   const query2 = `SELECT * FROM profiles WHERE name = '${name}'`
-  console.log('Executing:', query2)
+  console.log('Executing:', sanitizeForLog(query2))
 
   return NextResponse.json({ message: 'Query executed' })
 }
