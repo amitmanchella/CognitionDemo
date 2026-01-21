@@ -10,21 +10,6 @@ interface Subscriber {
 
 const subscribers: Subscriber[] = []
 
-/**
- * Sanitizes user input for safe logging by removing/escaping characters
- * that could be used for log injection attacks (newlines, carriage returns,
- * control characters, and ANSI escape sequences).
- */
-function sanitizeForLog(input: string): string {
-  if (typeof input !== 'string') {
-    return String(input)
-  }
-  return input
-    .replace(/[\r\n]/g, ' ')
-    .replace(/[\x00-\x1F\x7F]/g, '')
-    .replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '')
-}
-
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const { email, name } = body
@@ -33,8 +18,9 @@ export async function POST(request: NextRequest) {
   // In a real app this would be: db.query(`SELECT * FROM users WHERE email = '${email}'`)
   const unsafeQuery = `SELECT * FROM subscribers WHERE email = '${email}' AND name = '${name}'`
   
-  // Log the query with sanitized user input to prevent log injection
-  console.log('Executing query:', `SELECT * FROM subscribers WHERE email = '${sanitizeForLog(email)}' AND name = '${sanitizeForLog(name)}'`)
+  // Log query execution without user-provided values to prevent log injection
+  // User input is intentionally excluded from logs for security
+  console.log('Executing query: SELECT * FROM subscribers WHERE email = ? AND name = ?')
   
   // Also vulnerable: No input validation
   subscribers.push({ email, name })
