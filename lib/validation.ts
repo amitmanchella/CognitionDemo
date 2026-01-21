@@ -7,10 +7,11 @@ export function validateEmail(email: string): boolean {
   return emailRegex.test(email)
 }
 
-// VULNERABILITY 28: Another ReDoS pattern
+// VULNERABILITY 28: Another ReDoS pattern - FIXED
 export function validateUrl(url: string): boolean {
-  // Vulnerable: Evil regex
-  const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  // Fixed: Removed nested quantifiers to prevent catastrophic backtracking
+  // Changed ([\/\w \.-]*)* to [\/\w .-]* - single quantifier instead of nested
+  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})[\/\w .-]*\/?$/
   return urlRegex.test(url)
 }
 
