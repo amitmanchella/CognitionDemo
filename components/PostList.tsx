@@ -1,11 +1,5 @@
 import PostCard from './PostCard'
-
-interface Post {
-  slug: string
-  title: string
-  date: string
-  excerpt: string
-}
+import { Post } from '@/lib/posts'
 
 interface PostListProps {
   posts: Post[]

@@ -6,6 +6,8 @@ interface PostCardProps {
     title: string
     date: string
     excerpt: string
+    readingTime: number
+    wordCount: number
   }
 }
 
@@ -23,6 +25,7 @@ export default function PostCard({ post }: PostCardProps) {
           month: 'long',
           day: 'numeric',
         })}
+        <span className="text-gray-500 text-sm"> · {post.readingTime} min read · {post.wordCount} words</span>
       </p>
       <p className="text-gray-600">{post.excerpt}</p>
     </article>
