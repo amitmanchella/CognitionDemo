@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { exec, execSync } from 'child_process'
 import fs from 'fs'
+import path from 'path'
 
 // VULNERABILITY 17: More hardcoded credentials
 const ADMIN_CREDENTIALS = {
@@ -30,13 +31,27 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ message: 'Admin API' })
 }
 
-// VULNERABILITY 19: Arbitrary file write
+// FIXED: Arbitrary file write vulnerability
+// Now validates that the resolved path stays within the allowed directory
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const { filename, content } = body
   
-  // Vulnerable: Writing to user-controlled file path
-  fs.writeFileSync(`./public/${filename}`, content)
+  if (!filename || typeof filename !== 'string') {
+    return NextResponse.json({ error: 'Invalid filename' }, { status: 400 })
+  }
+  
+  // Get the absolute path of the allowed base directory
+  const baseDir = path.resolve('./public/')
+  // Resolve the full path of the requested file
+  const filePath = path.resolve(baseDir, filename)
+  
+  // Security check: Ensure the resolved path is within the allowed directory
+  if (!filePath.startsWith(baseDir + path.sep) && filePath !== baseDir) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+  }
+  
+  fs.writeFileSync(filePath, content)
   
   return NextResponse.json({ message: 'File saved' })
 }

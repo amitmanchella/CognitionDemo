@@ -19,14 +19,25 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ results: [] })
 }
 
-// VULNERABILITY 2: Path Traversal
-// User can access arbitrary files on the system
+// FIXED: Path Traversal vulnerability
+// Now validates that the resolved path stays within the allowed directory
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const filename = body.filename
   
-  // Vulnerable: Path traversal - user can read any file
-  const filePath = path.join('./content/posts/', filename)
+  if (!filename || typeof filename !== 'string') {
+    return NextResponse.json({ error: 'Invalid filename' }, { status: 400 })
+  }
+  
+  // Get the absolute path of the allowed base directory
+  const baseDir = path.resolve('./content/posts/')
+  // Resolve the full path of the requested file
+  const filePath = path.resolve(baseDir, filename)
+  
+  // Security check: Ensure the resolved path is within the allowed directory
+  if (!filePath.startsWith(baseDir + path.sep) && filePath !== baseDir) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+  }
   
   try {
     const content = fs.readFileSync(filePath, 'utf-8')
