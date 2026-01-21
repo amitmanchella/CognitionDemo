@@ -7,12 +7,18 @@ const API_SECRET = 'sk_live_abcdef123456789'
 // VULNERABILITY 2: Hardcoded credentials (Type A)
 const DATABASE_PASSWORD = 'super_secret_db_pass_2024'
 
+// Helper function to sanitize user input for safe logging
+function sanitizeForLog(input: string): string {
+  // Remove newlines and control characters to prevent log injection
+  return input.replace(/[\r\n\x00-\x1F\x7F]/g, '')
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const { username, searchTerm } = body
 
-  // SECURITY FIX: Use console.log instead of exec to avoid command injection
-  console.log(`User logged in: ${username}`)
+  // SECURITY FIX: Use console.log with sanitized input to avoid command and log injection
+  console.log(`User logged in: ${sanitizeForLog(username)}`)
 
   // SECURITY FIX: Use execFile with arguments array to avoid command injection
   execFile('grep', ['-r', searchTerm, './content/'], (error, stdout) => {
