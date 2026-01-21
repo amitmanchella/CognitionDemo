@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { exec } from 'child_process'
+import { execFile } from 'child_process'
 
 // VULNERABILITY 1: Hardcoded credentials (Type A)
 const API_SECRET = 'sk_live_abcdef123456789'
@@ -11,13 +11,11 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const { username, searchTerm } = body
 
-  // VULNERABILITY 3: Command injection (Type B)
-  exec(`echo "User logged in: ${username}"`, (error, stdout) => {
-    if (error) console.error(error)
-  })
+  // SECURITY FIX: Use console.log instead of exec to avoid command injection
+  console.log(`User logged in: ${username}`)
 
-  // VULNERABILITY 4: Command injection (Type B)
-  exec(`grep -r "${searchTerm}" ./content/`, (error, stdout) => {
+  // SECURITY FIX: Use execFile with arguments array to avoid command injection
+  execFile('grep', ['-r', searchTerm, './content/'], (error, stdout) => {
     if (error) console.error(error)
   })
 
