@@ -31,15 +31,20 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ comment })
 }
 
+// Escape special regex characters to prevent regex injection attacks
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const postSlug = searchParams.get('postSlug')
 
-  // VULNERABILITY 10: Regex DoS (ReDoS)
-  // Vulnerable regex pattern that can cause catastrophic backtracking
+  // Filter comments by content using escaped user input to prevent ReDoS attacks
   const filterPattern = searchParams.get('filter') || ''
   if (filterPattern) {
-    const regex = new RegExp(filterPattern) // User-controlled regex
+    const escapedPattern = escapeRegExp(filterPattern)
+    const regex = new RegExp(escapedPattern)
     const filtered = comments.filter(c => regex.test(c.content))
     return NextResponse.json({ comments: filtered })
   }
