@@ -10,16 +10,28 @@ interface Subscriber {
 
 const subscribers: Subscriber[] = []
 
+function sanitizeForLog(input: string): string {
+  if (typeof input !== 'string') {
+    return String(input)
+  }
+  return input
+    .replace(/[\r\n]/g, ' ')
+    .replace(/[\x00-\x1F\x7F]/g, '')
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const { email, name } = body
+
+  const sanitizedEmail = sanitizeForLog(email || '')
+  const sanitizedName = sanitizeForLog(name || '')
 
   // Vulnerable: Building SQL query with string concatenation
   // In a real app this would be: db.query(`SELECT * FROM users WHERE email = '${email}'`)
   const unsafeQuery = `SELECT * FROM subscribers WHERE email = '${email}' AND name = '${name}'`
   
-  // Log the query (simulating execution)
-  console.log('Executing query:', unsafeQuery)
+  // Log with sanitized values to prevent log injection
+  console.log('Executing query for email:', sanitizedEmail, 'name:', sanitizedName)
   
   // Also vulnerable: No input validation
   subscribers.push({ email, name })
