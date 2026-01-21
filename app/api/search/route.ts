@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 }
 
 // FIXED: Path Traversal vulnerability
-// Now validates that the resolved path stays within the allowed directory
+// Uses path.basename() to sanitize filename and prevent directory traversal
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const filename = body.filename
@@ -29,15 +29,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid filename' }, { status: 400 })
   }
   
-  // Get the absolute path of the allowed base directory
-  const baseDir = path.resolve('./content/posts/')
-  // Resolve the full path of the requested file
-  const filePath = path.resolve(baseDir, filename)
+  // Sanitize filename by extracting only the base name (removes any directory components)
+  const sanitizedFilename = path.basename(filename)
   
-  // Security check: Ensure the resolved path is within the allowed directory
-  if (!filePath.startsWith(baseDir + path.sep) && filePath !== baseDir) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 })
-  }
+  // Construct safe file path using only the sanitized base filename
+  const filePath = path.join('./content/posts/', sanitizedFilename)
   
   try {
     const content = fs.readFileSync(filePath, 'utf-8')
